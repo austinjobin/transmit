@@ -1,22 +1,26 @@
 const int OP= 12;
 unsigned int Time=235;
 int  p=0;
-void setup() {
-  // put your setup code here, to run once:
-Serial.begin(9600);
-pinMode(OP, OUTPUT);
-while(Serial.available()==0){
-String input = Serial.readString();
-Serial.print(input);
-if(input.length()){
-break;
-}
+void setup() 
+{
+  
+  Serial.begin(9600);
+  pinMode(OP, OUTPUT);
+  
+  while(Serial.available()==0){
+  String input = Serial.readString();
+  Serial.print(input);
+  
+  if(input.length())
+    break;
+  
 }
 int Size=input.length()*10;
 bool output[Size];
 for(int i{0};i<input.length();i++){
-  p=l*
-output[i]=0;
+  //p=l*
+  output[i]=0;
+
 for(int j{0}; j<8;j++)
 }
 
