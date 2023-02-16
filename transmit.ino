@@ -15,11 +15,17 @@ break;
 int Size=input.length()*10;
 bool output[Size];
 for(int i{0};i<input.length();i++){
-  p=l*
-output[i]=0;
-for(int j{0}; j<8;j++)
+  p=10*i;
+output[p]=0;
+int h=0;
+for(int j{p+1}; j<p+9;j++){
+output[j]=((input[i]>>h)&1)
+h++;
 }
-
+output[p-1]=1;
+}
+for()
+serial.print()
 }
 
 void loop() {
