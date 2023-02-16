@@ -1,6 +1,7 @@
 const int OP= 12;
-unsigned int Time=235;
 int  p=0;
+int arraycount{0};
+bool start{1};
 String input{""};
 void setup() {
   // put your setup code here, to run once:
@@ -12,7 +13,7 @@ if(input.length()){
 break;
 }
 }
-int Size=(input.length())*10;
+static int Size=(input.length())*10;
 bool output[Size];
 for(int i{0};i<input.length();i++){
   p=10*i;
@@ -24,16 +25,28 @@ h++;
 }
 output[p+9]=1;
 }
-for(int i{0};i<Size;i++){
-    Serial.println(output[i]);
+while(arraycount<Size-1)
+{
+if(!start){
+    arraycount++;
 }
+start=false;
+
+switch(output[arraycount]){
+case 0:
+tone(OP,2295,22);
+Serial.println("zero");
+break;
+case 1:
+tone(OP,2125,22);
+Serial.println("one");
+break;
+}
+}
+
 }
 
 void loop() {
   // put your main code here, to run repeatedly  
-digitalWrite(OP,HIGH);
-delayMicroseconds(Time);
-digitalWrite(OP,LOW);
-delayMicroseconds(Time);
-
+ 
 }
