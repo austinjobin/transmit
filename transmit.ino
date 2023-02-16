@@ -1,6 +1,7 @@
 const int OP= 12;
 unsigned int Time=235;
 int  p=0;
+String input;
 void setup() {
   // put your setup code here, to run once:
 Serial.begin(9600);
@@ -19,13 +20,12 @@ for(int i{0};i<input.length();i++){
 output[p]=0;
 int h=0;
 for(int j{p+1}; j<p+9;j++){
-output[j]=((input[i]>>h)&1)
+output[j]=((input[i]>>h)&1);
 h++;
 }
-output[p-1]=1;
+output[p+9]=1;
 }
-for()
-serial.print()
+
 }
 
 void loop() {
