@@ -1,6 +1,6 @@
 const int OP= 12;
 unsigned int Time=235;
-
+int  p=0;
 void setup() {
   // put your setup code here, to run once:
 Serial.begin(9600);
@@ -12,7 +12,14 @@ if(input.length()){
 break;
 }
 }
-bool output[input.length()];
+int Size=input.length()*10;
+bool output[Size];
+for(int i{0};i<input.length();i++){
+  p=l*
+output[i]=0;
+for(int j{0}; j<8;j++)
+}
+
 }
 
 void loop() {
