@@ -25,7 +25,14 @@ h++;
 }
 output[p+9]=1;
 }
-while(arraycount<Size-1)
+//while(1)  //send message repeatedly
+ {    
+  // if(arraycount>Size-1)
+  {
+   //  arraycount=0;
+  //   start=true;
+   }
+while(arraycount<Size-1)  //send message and stop
 {
 if(!start){
     arraycount++;
@@ -36,16 +43,18 @@ switch(output[arraycount]){
 case 0:
 tone(OP,2295,22);
 Serial.println("zero");
+delay(22);
 break;
 case 1:
 tone(OP,2125,22);
 Serial.println("one");
+delay(22);
 break;
 }
 }
 
 }
-
+}
 void loop() {
   // put your main code here, to run repeatedly  
  
