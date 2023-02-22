@@ -25,14 +25,14 @@ h++;                                  //increment h to get next bool value in in
 }
 output[p+9]=1;                        //UART END bit
 }
-//while(1)  //send message repeatedly
+while(1)  //send message repeatedly
  {    
-  // if(arraycount>Size-1)        //commented outcode for testing loops message sent
+   if(arraycount>Size-1)        //commented outcode for testing loops message sent
   {
-   //  arraycount=0;
-  //   start=true;
+     arraycount=0;
+     start=true;
    }
-while(arraycount<Size-1)  //send message and stop
+//while(arraycount<Size-1)  //send message and stop
 {
 if(!start){     //start flag only increments arraycount after first bit is encoded
     arraycount++;
