@@ -1,8 +1,6 @@
 //Authors: Austin Jobin, Alvin Chung
 
 const int transmitPin = 12; // The pin used for transmitting, in this case digital pin 12
-int bitIndex = 0;           // Used for keeping track of which bit is being assigned in the array
-int arrayCount = 0;         // counter for what bit is being transmitted in the array
 String input = "";          //intitializing input string as an empty string
 int transmitSize;           //The number of bits for a single transmission
 
