@@ -6,17 +6,17 @@ int arrayCount = 0;         // counter for what bit is being transmitted in the 
 String input = "";          //intitializing input string as an empty string
 int transmitSize;           //The number of bits for a single transmission
 
-//We are using an array that only needs to be initialized once,
-//so this bool will be set true when it has been initialized.
-//We use this method since arrays have static size, so we need to
-//initialize it  within the same scope we need to read it in.
-bool outputInitialized = false;
+#define ONE 1
+#define ZERO 0
 
 void setup() //Runs once
 {
   Serial.begin(9600);               // Initialize Serial port
   pinMode(transmitPin, OUTPUT);     // Set digital pin 12 to output
+}
 
+void loop() //Runs continuously, indefinitely
+{
   //Reading input from the user from the Serial Monitor
   while (Serial.available() == 0)   // Keeps checking if there is anything stored in the Serial receive buffer
   {                                 // After there is something, 
@@ -24,20 +24,15 @@ void setup() //Runs once
     if (input.length() > 0)         // when input has a value, stop reading monitor
       break;
   }
-
-}
-
-void loop() //Runs continuously, indefinitely
-{
- if(outputInitialized == false)
- {
+ 
   //Converting the input into bits
     //number of bytes * (8 bits for ASCII + 2 extra bits)
     // Instantiate transmission size - 10 bits per character (1 stop, 1 start, 8 for ASCII)
     //Subtract 1 from input.length() remove the space allocated for the NULL value of the string
-  transmitSize = ((input.length() - 1) * (8 + 2) );    
+  transmitSize = ((input.length() - 1) * (8 + 2) ); 
 
   bool output[transmitSize];          // Intializing boolean array for output
+
   int maxIndex = transmitSize - 1;    // Storing the max index for readability
 
   //Convert input String to a char array
@@ -67,7 +62,7 @@ void loop() //Runs continuously, indefinitely
   //For debugging:
   Serial.print("Output size: ");
   Serial.println(sizeof(output));
-  for(int i = 0; i < transmitSize; i++)
+  for(int i = 0; i < sizeof(output); i++)
   {
     Serial.print("Bit ");
     Serial.print(i);
@@ -75,20 +70,38 @@ void loop() //Runs continuously, indefinitely
     Serial.println(output[i]);
   }
 
-  outputInitialized = true;
- }
- 
-  
-}
+  //Transmitting the data - continues indefinitely
+  while(1)
+  {
+    sendFrequencyOne();
+    for(int index = 0; index < sizeof(output); index++)
+    {
+      switch(output[index])
+      {
+        case ONE:
+          sendFrequencyOne();
+          break;
 
+        case ZERO:
+          sendFrequencyZero();
+          break;   
+      }
+    }
+  }
+}
+  
 //Produces a 2125Hz square wave for 22ms
 void sendFrequencyOne()
 {
-  tone(transmitPin, 2125, 22);
+  tone(transmitPin, 2125);
+  delay(22);
+  noTone(transmitPin);
 }
 
 //Produces a 2295Hz square wave for 22ms
 void sendFrequencyZero()
 {
-  tone(transmitPin, 2295, 22);
+  tone(transmitPin, 2295);
+  delay(22);
+  noTone(transmitPin);
 }
