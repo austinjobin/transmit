@@ -1,70 +1,107 @@
 //Authors: Austin Jobin, Alvin Chung
 
-const int transmitPin = 12;    // the pin used for transmitting, in this case digital pin 12
-int p = 0;            //constant in charge of keeping track which character is being assigned in the array
-int arrayCount{ 0 };  // counter for what bit is being transmitted in the array
-bool start{ 1 };      //flag for the initial start of the message
-String input{ "" };   //intitializing input string to NULL
+const int transmitPin = 12; // The pin used for transmitting, in this case digital pin 12
+int bitIndex = 0;           // Used for keeping track of which bit is being assigned in the array
+int arrayCount = 0;         // counter for what bit is being transmitted in the array
+String input = "";          //intitializing input string as an empty string
+int transmitSize;           //The number of bits for a single transmission
+
+#define ONE 1
+#define ZERO 0
 
 void setup() //Runs once
 {
-  Serial.begin(9600);               //ardino bitrate
-  pinMode(transmitPin, OUTPUT);     //setting digital pin 12 to output
-  while (Serial.available() == 0)   //loop reading serial monitor
-  {  
-    
-    input = Serial.readString();    //read from serial monitor
-    if (input.length())             //when input has a value stop reading monitor
+  Serial.begin(9600);               // Initialize Serial port
+  pinMode(transmitPin, OUTPUT);     // Set digital pin 12 to output
+}
+
+void loop() //Runs continuously, indefinitely
+{
+  //Reading input from the user from the Serial Monitor
+  while (Serial.available() == 0)   // Keeps checking if there is anything stored in the Serial receive buffer
+  {                                 // After there is something, 
+    input = Serial.readString();    // Read data from serial buffer
+    if (input.length() > 0)         // when input has a value, stop reading monitor
       break;
-    
   }
-  static int Size = (input.length()) * 10;     //size of array is 10 bits per character
-  bool output[Size];                           //intilizing boolean array for output
+ 
+  //Converting the input into bits
+    //number of bytes * (8 bits for ASCII + 2 extra bits)
+    // Instantiate transmission size - 10 bits per character (1 stop, 1 start, 8 for ASCII)
+    //Subtract 1 from input.length() remove the space allocated for the NULL value of the string
+  transmitSize = ((input.length() - 1) * (8 + 2) ); 
 
-  for (int i{ 0 }; i < input.length(); i++) {  // loop filling boolean array runs once for each character
-    p = 10 * i;                                // size of P multiplied by 10 to keep track of where in the array a UART character is being encoded
-    output[p] = 0;                             //Start bit assigned to 0
-    
-    int h = 0;                                 // intilizing variable to encode char to boolean value LSB to MSB
-    for (int j{ p + 1 }; j < p + 9; j++) {     //nested loop for encoding char to the data portion of the UART frame consisting of 8 bits
-      output[j] = ((input[i] >> h) & 1);       //bitshift operation encoding Char from input string to boolean value tobe stored in output array
-      h++;                                     //increment h to get next bool value in input char
-    }
-    output[p + 9] = 1;  //UART END bit
-  }
-  
-  while (1)  //send message repeatedly
+  bool output[transmitSize];          // Intializing boolean array for output
+
+  int maxIndex = transmitSize - 1;    // Storing the max index for readability
+
+  //Convert input String to a char array
+  char characters[input.length()];
+  input.toCharArray(characters, input.length());
+
+  //"Major" loop keeps track of which "symbol" is being encoded, each symbol requires 10 bits
+  for(int symbolIndex = 0; symbolIndex <= maxIndex - 9; symbolIndex += 10)
   {
-    if (arrayCount > Size - 1)  // if the count exceeds the array size (the string is finished) restart
+    output[symbolIndex] = 0;      // Start Bit = 0
+    output[symbolIndex + 9] = 1;  // Stop Bit = 1
+    
+    char currentCharacter = characters[symbolIndex/10];
+
+    //"Minor" loop keeps track of which bit within a single symbol is being encoded
+    //Starts at "second" bit of frame, first bit of ASCII Code
+    int maxFrameIndex = symbolIndex + 9;
+    int bitNumber = 0;
+    for(int frameIndex = symbolIndex + 1; frameIndex <= maxFrameIndex - 1; frameIndex++)
     {
-      arrayCount = 0;
-      start = true;
+      output[frameIndex] = bitRead(currentCharacter, bitNumber); //LSB first, insert bit into output array
+
+      bitNumber++;
     }
-    //while(arrayCount<Size-1)  //send message and stop
+  }
+
+  //For debugging:
+  Serial.print("Output size: ");
+  Serial.println(sizeof(output));
+  for(int i = 0; i < sizeof(output); i++)
+  {
+    Serial.print("Bit ");
+    Serial.print(i);
+    Serial.print(": ");
+    Serial.println(output[i]);
+  }
+
+  //Transmitting the data - continues indefinitely
+  while(1)
+  {
+    sendFrequencyOne();
+    for(int index = 0; index < sizeof(output); index++)
     {
-      //if (!start) {  //start flag only increments arrayCount after first bit is encoded
-      //  arrayCount++;
-      //}
-
-      //start = false;  //sets flag to false ensuring array count is initialized
-
-      switch (output[arrayCount])  //switch statment sending output as either a 2295 hz space and a 2125 hz mark
+      switch(output[index])
       {
-        case 0:
-          tone(transmitPin, 2295, 22);      //tone fuction sending 2295 Hz square wave for 22 ms to output digital pin 12
-          Serial.println("zero");  //testing purposes prints if a zero was sent to output
-          delay(22);               //delay allowing frequency tobe sent for 22ms before sending next bit
+        case ONE:
+          sendFrequencyOne();
           break;
-        case 1:
-          tone(transmitPin, 2125, 22);  //same code as above for a 2125 Hz mark
-          Serial.println("one");
-          delay(22);
-          break;
+
+        case ZERO:
+          sendFrequencyZero();
+          break;   
       }
-      arrayCount++; //increment arrayCount
     }
   }
 }
-void loop() {
-  // put your main code here, to run repeatedly
+  
+//Produces a 2125Hz square wave for 22ms
+void sendFrequencyOne()
+{
+  tone(transmitPin, 2125);
+  delay(22);
+  noTone(transmitPin);
+}
+
+//Produces a 2295Hz square wave for 22ms
+void sendFrequencyZero()
+{
+  tone(transmitPin, 2295);
+  delay(22);
+  noTone(transmitPin);
 }
