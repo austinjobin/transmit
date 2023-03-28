@@ -22,21 +22,19 @@ void loop() //Runs continuously, indefinitely
     if (input.length() > 0)         // when input has a value, stop reading monitor
       break;
   }
- 
   //Converting the input into bits
     //number of bytes * (8 bits for ASCII + 2 extra bits)
     // Instantiate transmission size - 10 bits per character (1 stop, 1 start, 8 for ASCII)
     //Subtract 1 from input.length() remove the space allocated for the NULL value of the string
-  transmitSize = ((input.length() - 1) * (8 + 2) ); 
+  transmitSize = ((input.length() ) * (8 + 2) ); 
 
   bool output[transmitSize];          // Intializing boolean array for output
 
-  int maxIndex = transmitSize - 1;    // Storing the max index for readability
+  int maxIndex = transmitSize ;    // Storing the max index for readability
 
   //Convert input String to a char array
-  char characters[input.length()];
-  input.toCharArray(characters, input.length());
-
+  char characters[input.length()+1];
+  input.toCharArray(characters, input.length()+1);
   //"Major" loop keeps track of which "symbol" is being encoded, each symbol requires 10 bits
   for(int symbolIndex = 0; symbolIndex <= maxIndex - 9; symbolIndex += 10)
   {
