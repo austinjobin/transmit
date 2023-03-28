@@ -93,7 +93,6 @@ void sendFrequencyOne()
 {
   tone(transmitPin, 2125);
   delay(22);
-  noTone(transmitPin);
 }
 
 //Produces a 2295Hz square wave for 22ms
@@ -101,5 +100,4 @@ void sendFrequencyZero()
 {
   tone(transmitPin, 2295);
   delay(22);
-  noTone(transmitPin);
 }
