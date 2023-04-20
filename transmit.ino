@@ -73,7 +73,7 @@ void loop() //Runs continuously, indefinitely
   //Transmitting the data - continues indefinitely
   while(1)
   {
-    sendFrequencyOne(); //Extra idle bit
+    //sendFrequencyOne(); //Extra idle bit
     for(int index = 0; index < sizeof(output); index++)
     {
       switch(output[index]) 
