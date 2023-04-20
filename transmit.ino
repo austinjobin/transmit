@@ -66,6 +66,10 @@ void loop() //Runs continuously, indefinitely
     Serial.println(output[i]);
   }
 
+  //"Priming" the receiver with "one" bits
+  sendFrequencyOne();
+  delay(44);
+  
   //Transmitting the data - continues indefinitely
   while(1)
   {
